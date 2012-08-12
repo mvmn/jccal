@@ -1,0 +1,30 @@
+JCCal - Java CommandLine Calendar utility.
+
+# Primarily intended to be used for GeekTool calendar output.
+
+Proper command line calendar output for GeekTool should support these features:
+- Rendering of only "highlights" (current date, week number, day of week) keeping their position;
+- Relative start/end parameters, like -1 year to +1 year, -3 months to +3 months etc;
+- Nice to have are customizations of rendering: grid, spacing, show/hide week numbers etc.
+
+
+# Secondary goal: to implement simple yet functional dates API.
+
+Take a look at my incremental implementation of dates storage: Year, YearMonth, YearMonthDay classes. 
+They all extend AbstractIntDateLevel as they store their own value (like year, month or day) as int,
+and use composition to store "supervalue", i.e. YearMonth also stores Year, YearMonthDay aslo stores YearMonth.
+And Year has no supervalue, obviously.
+
+The API allows to add arbitrary number of values, like +1000 or -1000 days to YearMonthDay, or months for YearMonth etc.
+
+AbstractIntDateLevel allows to simply add a sublevels - like YMDHour, YMDHourMinute and YMDHourMinuteSecond that are still
+to be added in order to also store time. Every sublevel on performing addition should correct value of superlevel. 
+I.e. if we add 12 (or -12) months we should definitely correct year value.
+
+The opposite though is only true for Days, since there is different limit for days in different months (minding leap/nonleap years).
+Therefore the implementation of YearMonthDay is somewhat special, as it has to update Day on add/set of Month.
+
+The API provides all basic functionality, like comparing dates (you can find out number of days inbetween two YearMonthDay values, 
+or number of months inbetween two YearMonth values; also simpler features are all there - like isBefore/isAfter/isSame methods),
+obtaining number of Day in year, Week in year and Day of week for YearMonthDay class.
+
