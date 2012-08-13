@@ -5,8 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import x.mvmn.util.cli.CommandLineHelper;
 import x.mvmn.util.dates.impl.YearMonth;
@@ -14,6 +19,11 @@ import x.mvmn.util.dates.impl.YearMonthDay;
 import x.mvmn.util.jccal.model.MonthGrid;
 
 public class JCCal {
+
+	private static String[] WEEK_DAYS_NAMES = { "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su" };
+	private static String[] MONTHS_TITLES = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
+			"December" };
+	private static String EMPTY_CELL = "  ";
 
 	public static void main(String[] args) {
 		Map<String, String> cliParams = CommandLineHelper.getArgs(args);
@@ -44,9 +54,92 @@ public class JCCal {
 		int yearViewColumns = CommandLineHelper.asInt(cliParams.get("cols"), 1);
 		boolean flipYearView = cliParams.get("fy") != null;
 		boolean flipMonthView = cliParams.get("fm") != null;
+		String dayNumberFormat = "%-2d";
+		if (cliParams.get("lzd") != null) {
+			dayNumberFormat = "%02d";
+		}
+		String weekNumberFormat = "%-2d";
+		if (cliParams.get("lzw") != null) {
+			weekNumberFormat = "%02d";
+		}
 
-		YearMonthDay ymdToday = new YearMonthDay(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH) - 1);
-		// System.out.println("Months to fill: "+ymEnd.compareTo(ymStart));
+		String weekDaysNamesCapitalization = cliParams.get("wdn");
+		if (weekDaysNamesCapitalization != null && weekDaysNamesCapitalization.trim().length() == 1) {
+			weekDaysNamesCapitalization = weekDaysNamesCapitalization.trim().toLowerCase();
+		} else {
+			weekDaysNamesCapitalization = null;
+		}
+
+		String titleFormat = cliParams.get("tlny") != null ? "%2$s" : "%04d %s";
+
+		String daysVerticalSeparator = "|";
+		if (cliParams.get("dvs") != null) {
+			daysVerticalSeparator = cliParams.get("dvs");
+		}
+		String monthsVerticalSeparator = "  ";
+		if (cliParams.get("mvs") != null) {
+			monthsVerticalSeparator = cliParams.get("mvs");
+		}
+
+		String daysHorizontalSeparator = null;
+		if (cliParams.get("dhs") != null && !cliParams.get("dhs").isEmpty()) {
+			daysHorizontalSeparator = cliParams.get("dhs");
+		}
+		String monthsHorizontalSeparator = null;
+		if (cliParams.get("mhs") != null && !cliParams.get("mhs").isEmpty()) {
+			monthsHorizontalSeparator = cliParams.get("mhs");
+		}
+
+		YearMonthDay highlightDay = new YearMonthDay(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH) - 1);
+		if (cliParams.get("hldate") != null && !cliParams.get("hldate").isEmpty()) {
+			try {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+				Date date = simpleDateFormat.parse(cliParams.get("hldate").trim());
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(date);
+				highlightDay.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_YEAR) - 1);
+			} catch (Exception e) {
+			}
+		}
+		{
+			int hlYearOffset = CommandLineHelper.asInt(cliParams.get("hly"), 0);
+			int hlMonthOffset = CommandLineHelper.asInt(cliParams.get("hlm"), 0);
+			int hlDayOffset = CommandLineHelper.asInt(cliParams.get("hld"), 0);
+			highlightDay.addYearValue(hlYearOffset);
+			highlightDay.addMonthValue(hlMonthOffset);
+			highlightDay.addDayValue(hlDayOffset);
+		}
+
+		String possiblePositions[] = { "f", "l", "n" };
+		Arrays.sort(possiblePositions);
+		String hAxisLinePosition = "f";
+		String vAxisLinePosition = "f";
+		String titleLinePosition = "f";
+		{
+			String positionHorizontalAxisParam = cliParams.get("phx");
+			if (positionHorizontalAxisParam != null && positionHorizontalAxisParam.trim().length() == 1) {
+				String val = positionHorizontalAxisParam.trim().toLowerCase();
+				if (Arrays.binarySearch(possiblePositions, val) >= 0) {
+					hAxisLinePosition = val;
+				}
+			}
+			String positionVerticalAxisParam = cliParams.get("pvx");
+			if (positionVerticalAxisParam != null && positionVerticalAxisParam.trim().length() == 1) {
+				String val = positionVerticalAxisParam.trim().toLowerCase();
+				if (Arrays.binarySearch(possiblePositions, val) >= 0) {
+					vAxisLinePosition = val;
+				}
+			}
+			String positionTitleLineParam = cliParams.get("ptl");
+			if (positionTitleLineParam != null && positionTitleLineParam.trim().length() == 1) {
+				String val = positionTitleLineParam.trim().toLowerCase();
+				if (Arrays.binarySearch(possiblePositions, val) >= 0) {
+					titleLinePosition = val;
+				}
+			}
+		}
+
+		// Calculate values
 		int yearViewRows = (int) Math.ceil(((double) ymEnd.compareTo(ymStart) + 1) / (double) yearViewColumns);
 		if (yearViewRows < 1)
 			yearViewRows = 1;
@@ -55,13 +148,11 @@ public class JCCal {
 			monthsData[i] = new MonthGrid[yearViewColumns];
 		}
 
-		// System.out.format("Grid : %02d x %02d\n",yearViewRows,yearViewColumns);
+		// Render
 		int mGridRow = 0;
 		int mGridCol = 0;
 		while (!ymStart.isAfter(ymEnd)) {
 			MonthGrid mGridVal = new MonthGrid(ymStart.getYearValue(), ymStart.getMonthValue());
-			// System.out.format("Filling %02d:%02d with %s\n", mGridRow,
-			// mGridCol, ymStart.toString());
 			monthsData[mGridRow][mGridCol] = mGridVal;
 			if (!flipYearView) {
 				mGridCol++;
@@ -79,26 +170,135 @@ public class JCCal {
 			ymStart.addMonthValue(1);
 		}
 
+		int mRowsCount = (flipMonthView ? 7 : 6);
+		int mColsCount = (flipMonthView ? 6 : 7);
 		for (int row = 0; row < yearViewRows; row++) {
-			for (int mRow = 0; mRow < (flipMonthView ? 7 : 6); mRow++) {
+			StringBuilder titleLine = new StringBuilder();
+			StringBuilder hAxisLine = new StringBuilder();
+			for (int col = 0; col < yearViewColumns; col++) {
+				String titleText = String.format(titleFormat, monthsData[row][col].getYear(), MONTHS_TITLES[monthsData[row][col].getMonth()],
+						monthsData[row][col].getMonth());
+
+				int remainingLength = (2 + daysVerticalSeparator.length()) * mColsCount - daysVerticalSeparator.length() + monthsVerticalSeparator.length()
+						- titleText.length();
+				titleLine.append(titleText);
+				for (int i = 0; i < remainingLength; i++) {
+					titleLine.append(" ");
+				}
+
+				if ("f".equalsIgnoreCase(vAxisLinePosition)) {
+					hAxisLine.append(EMPTY_CELL).append(daysVerticalSeparator);
+					titleLine.append("  ");
+					for (int i = 0; i < daysVerticalSeparator.length(); i++)
+						titleLine.append(" ");
+				}
+				for (int mCol = 0; mCol < mColsCount; mCol++) {
+					String hAxisValue = getAxisValue(monthsData[row][col], true, flipMonthView, 0, mCol, weekDaysNamesCapitalization, weekNumberFormat);
+					hAxisLine.append(hAxisValue);
+					if (mCol < mColsCount - 1) {
+						hAxisLine.append(daysVerticalSeparator);
+					}
+				}
+				if ("l".equalsIgnoreCase(vAxisLinePosition)) {
+					hAxisLine.append(daysVerticalSeparator).append(EMPTY_CELL);
+					titleLine.append("  ");
+					for (int i = 0; i < daysVerticalSeparator.length(); i++)
+						titleLine.append(" ");
+				}
+				if (col < yearViewColumns - 1) {
+					hAxisLine.append(monthsVerticalSeparator);
+				}
+			}
+			if ("f".equalsIgnoreCase(titleLinePosition)) {
+				System.out.println(titleLine.toString());
+			}
+			if ("f".equalsIgnoreCase(hAxisLinePosition)) {
+				System.out.println(hAxisLine.toString());
+			}
+			for (int mRow = 0; mRow < mRowsCount; mRow++) {
+				StringBuilder outputLine = new StringBuilder();
 				for (int col = 0; col < yearViewColumns; col++) {
-					for (int mCol = 0; mCol < (flipMonthView ? 6 : 7); mCol++) {
+					String vAxisValue = getAxisValue(monthsData[row][col], false, flipMonthView, mRow, 0, weekDaysNamesCapitalization, weekNumberFormat);
+					if ("f".equalsIgnoreCase(vAxisLinePosition)) {
+						outputLine.append(vAxisValue).append(daysVerticalSeparator);
+					}
+					for (int mCol = 0; mCol < mColsCount; mCol++) {
+						boolean filled = false;
 						if (monthsData[row][col] != null) {
 							int dayVal = monthsData[row][col].getValueAt(flipMonthView ? mCol : mRow, flipMonthView ? mRow : mCol);
-							if(dayVal>=0) {
-								System.out.format("%02d|", dayVal+1);
-							} else {
-								System.out.print("  |");
+							if (dayVal >= 0) {
+								outputLine.append(String.format(dayNumberFormat, dayVal + 1));
+								filled = true;
 							}
-						} else {
-							System.out.print("  |");
+						}
+						if (!filled) {
+							outputLine.append(EMPTY_CELL);
+						}
+						if (mCol < mColsCount - 1) {
+							outputLine.append(daysVerticalSeparator);
 						}
 					}
-					System.out.print(" ");
+					if ("l".equalsIgnoreCase(vAxisLinePosition)) {
+						outputLine.append(daysVerticalSeparator).append(vAxisValue);
+					}
+					if (col < yearViewColumns - 1) {
+						outputLine.append(monthsVerticalSeparator);
+					}
 				}
-				System.out.println("");
+				System.out.println(outputLine.toString());
+				renderHorizontalSeparator(daysHorizontalSeparator, outputLine.length());
 			}
-			System.out.println("");
+			if ("l".equalsIgnoreCase(hAxisLinePosition)) {
+				System.out.println(hAxisLine.toString());
+			}
+			if ("l".equalsIgnoreCase(titleLinePosition)) {
+				System.out.println(titleLine.toString());
+			}
+			renderHorizontalSeparator(monthsHorizontalSeparator, hAxisLine.length());
+		}
+	}
+
+	private static String getAxisValue(MonthGrid monthGrid, boolean horizontal, boolean flipMonthView, int mRow, int mCol, String weekDaysCapital,
+			String weekNumberFormat) {
+		String axisValue;
+		if (!flipMonthView && horizontal) {
+			axisValue = WEEK_DAYS_NAMES[flipMonthView ? mRow : mCol];
+			if (weekDaysCapital != null) {
+				if ("u".equalsIgnoreCase(weekDaysCapital)) {
+					axisValue = axisValue.toUpperCase();
+				} else if ("l".equalsIgnoreCase(weekDaysCapital)) {
+					axisValue = axisValue.toLowerCase();
+				}
+			}
+		} else {
+			int weekNumber = monthGrid.getWeekNumber(flipMonthView ? mCol : mRow);
+			if (weekNumber > 0) {
+				axisValue = String.format(weekNumberFormat, weekNumber);
+			} else {
+				axisValue = EMPTY_CELL;
+			}
+		}
+		return axisValue;
+	}
+
+	private static void renderHorizontalSeparator(String separatorString, int lineLength) {
+		if (separatorString != null && separatorString.length() > 0) {
+			StringBuilder result = new StringBuilder(separatorString);
+			String separatorWithoutNewlines = separatorString.replaceAll("\n", "");
+			if (separatorWithoutNewlines.length() > 0) {
+				while (result.length() < lineLength) {
+					result.append(separatorWithoutNewlines);
+				}
+				System.out.println(result.substring(0, lineLength));
+			} else {
+				System.out.println("\n");
+			}
+			if (separatorString.matches("\n")) {
+				Matcher matcher = Pattern.compile("\n").matcher(separatorString);
+				while (matcher.find()) {
+					System.out.print("\n");
+				}
+			}
 		}
 	}
 

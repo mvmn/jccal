@@ -3,16 +3,37 @@ Usage:
 
 Parameters:
 	-help - print this help message and exit.
+	
 	-fm - flip layout for months (columns: weeks, rows: days of week).
 	-fy - flip layout for year (months top to bottom instead of left to right).
+	-cols <val> - number of columns to render months in.
+	
+	-hl - render only highlights (current day, day of week, week number).
+	-hldate <yyyy-mm-dd> - instead of highlighting today's date, highlight some other specific date.
+	-hly <val> - move highlight date year: pX - add X, mX - subtract X (m2 - for 2 years before, p3 - for 3 years after etc). 
+	-hlm <val> - move highlight date month: pX - add X, mX - subtract X (m2 - for 2 months before, p3 - for 3 months after etc). 
+	-hld <val> - move highlight date day: pX - add X, mX - subtract X (m2 - for 2 days before, p3 - for 3 days after etc). 
+	
 	-sy <val> - start year - absolute (2012 etc) or relative (m3 - for 3 before, p2 - for 2 after etc).
 	-ey <val> - end year - absolute or relative.
 	-sm <val> - start month - absolute (12 etc) or relative (m2 - for 2 before, p3 - for 3 after etc).
 	-em <val> - end month - absolute or relative.
-	-wn <val> - week number render: f, l or n - first (left/top), last (right/bottom) or none.
-	-dw <val> - day of week render: f, l or n - first (left/top), last (right/bottom) or none.
-	-mhs <val> - horizontal separator inbetween months: any string.
+	
+	-phx <val> - horizontal axis values position: f, l or n - first (left/top), last (right/bottom) or none.
+	-pvx <val> - vertical axis values position: f, l or n - first (left/top), last (right/bottom) or none.
+	-ptl <val> - month title line position: f, l, n - top, bottom, none.
+	-tlny - do not render year near month title.
+
+	-wdn <val> - week days names capitalization change: u - uppercase, l - lowercase.
+	-lzd - add leading zeroes to dates (i.e. render |08|09|10| instead of |8 |9 |10|).
+	-lzw - add leading zeroes to week numbers.
+	
+	-mhs <val> - horizontal separator inbetween months: any string. No newline for empty string - use single space to just add newline. 
+	All newlines inside separator will be moved to the end of the line (i.e. pass in one line separator to have double line separation). 
+	-dhs <val> - horizontal separator inbetween days: any string. No newline for empty string - use single space to just add newline.
+	All newlines inside separator will be moved to the end of the line (i.e. pass in one line separator to have double line separation).
 	-mvs <val> - vertical separator inbetween months: any string.
-	-dhs <val> - horizontal separator inbetween days: any string.
 	-dvs <val> - vertical separator inbetween days: any string.
-	-cols <val> - number of columns to render months in.
+
+Notes/Known issues:
+	Currently minus symbol (the "-") cannot be used within parameters values as parser recognizes it for start of next parameter.
