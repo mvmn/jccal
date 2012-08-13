@@ -170,43 +170,45 @@ public class JCCal {
 			ymStart.addMonthValue(1);
 		}
 
+		int lastOutputLineLength = 0;
 		int mRowsCount = (flipMonthView ? 7 : 6);
 		int mColsCount = (flipMonthView ? 6 : 7);
 		for (int row = 0; row < yearViewRows; row++) {
 			StringBuilder titleLine = new StringBuilder();
 			StringBuilder hAxisLine = new StringBuilder();
 			for (int col = 0; col < yearViewColumns; col++) {
-				String titleText = String.format(titleFormat, monthsData[row][col].getYear(), MONTHS_TITLES[monthsData[row][col].getMonth()],
-						monthsData[row][col].getMonth());
+				String titleText = "";
+				if (monthsData[row][col] != null) {
+					titleText = String.format(titleFormat, monthsData[row][col].getYear(), MONTHS_TITLES[monthsData[row][col].getMonth()],
+							monthsData[row][col].getMonth());
 
-				int remainingLength = (2 + daysVerticalSeparator.length()) * mColsCount - daysVerticalSeparator.length() + monthsVerticalSeparator.length()
-						- titleText.length();
-				titleLine.append(titleText);
-				for (int i = 0; i < remainingLength; i++) {
-					titleLine.append(" ");
-				}
-
-				if ("f".equalsIgnoreCase(vAxisLinePosition)) {
-					hAxisLine.append(EMPTY_CELL).append(daysVerticalSeparator);
-					titleLine.append("  ");
-					for (int i = 0; i < daysVerticalSeparator.length(); i++)
+					int remainingLength = (2 + daysVerticalSeparator.length()) * mColsCount - daysVerticalSeparator.length() + monthsVerticalSeparator.length()
+							- titleText.length();
+					titleLine.append(titleText);
+					for (int i = 0; i < remainingLength; i++) {
 						titleLine.append(" ");
-				}
-				for (int mCol = 0; mCol < mColsCount; mCol++) {
-					String hAxisValue = getAxisValue(monthsData[row][col], true, flipMonthView, 0, mCol, weekDaysNamesCapitalization, weekNumberFormat);
-					hAxisLine.append(hAxisValue);
-					if (mCol < mColsCount - 1) {
-						hAxisLine.append(daysVerticalSeparator);
 					}
-				}
-				if ("l".equalsIgnoreCase(vAxisLinePosition)) {
-					hAxisLine.append(daysVerticalSeparator).append(EMPTY_CELL);
-					titleLine.append("  ");
-					for (int i = 0; i < daysVerticalSeparator.length(); i++)
-						titleLine.append(" ");
-				}
-				if (col < yearViewColumns - 1) {
-					hAxisLine.append(monthsVerticalSeparator);
+
+					if ("f".equalsIgnoreCase(vAxisLinePosition)) {
+						hAxisLine.append(EMPTY_CELL).append(daysVerticalSeparator);
+						titleLine.append("  ");
+						addSpaces(titleLine, daysVerticalSeparator.length());
+					}
+					for (int mCol = 0; mCol < mColsCount; mCol++) {
+						String hAxisValue = getAxisValue(monthsData[row][col], true, flipMonthView, 0, mCol, weekDaysNamesCapitalization, weekNumberFormat);
+						hAxisLine.append(hAxisValue);
+						if (mCol < mColsCount - 1) {
+							hAxisLine.append(daysVerticalSeparator);
+						}
+					}
+					if ("l".equalsIgnoreCase(vAxisLinePosition)) {
+						hAxisLine.append(daysVerticalSeparator).append(EMPTY_CELL);
+						titleLine.append("  ");
+						addSpaces(titleLine, daysVerticalSeparator.length());
+					}
+					if (col < yearViewColumns - 1) {
+						hAxisLine.append(monthsVerticalSeparator);
+					}
 				}
 			}
 			if ("f".equalsIgnoreCase(titleLinePosition)) {
@@ -215,12 +217,16 @@ public class JCCal {
 			if ("f".equalsIgnoreCase(hAxisLinePosition)) {
 				System.out.println(hAxisLine.toString());
 			}
+
 			for (int mRow = 0; mRow < mRowsCount; mRow++) {
 				StringBuilder outputLine = new StringBuilder();
 				for (int col = 0; col < yearViewColumns; col++) {
 					String vAxisValue = getAxisValue(monthsData[row][col], false, flipMonthView, mRow, 0, weekDaysNamesCapitalization, weekNumberFormat);
 					if ("f".equalsIgnoreCase(vAxisLinePosition)) {
-						outputLine.append(vAxisValue).append(daysVerticalSeparator);
+						if (monthsData[row][col] != null) {
+							outputLine.append(vAxisValue);
+							outputLine.append(daysVerticalSeparator);
+						}
 					}
 					for (int mCol = 0; mCol < mColsCount; mCol++) {
 						boolean filled = false;
@@ -230,23 +236,31 @@ public class JCCal {
 								outputLine.append(String.format(dayNumberFormat, dayVal + 1));
 								filled = true;
 							}
-						}
-						if (!filled) {
-							outputLine.append(EMPTY_CELL);
-						}
-						if (mCol < mColsCount - 1) {
-							outputLine.append(daysVerticalSeparator);
+							if (!filled) {
+								outputLine.append(EMPTY_CELL);
+								if (mCol < mColsCount - 1) {
+									outputLine.append(daysVerticalSeparator);
+								}
+							} else {
+								if (mCol < mColsCount - 1) {
+									outputLine.append(daysVerticalSeparator);
+								}
+							}
 						}
 					}
 					if ("l".equalsIgnoreCase(vAxisLinePosition)) {
-						outputLine.append(daysVerticalSeparator).append(vAxisValue);
+						if (monthsData[row][col] != null) {
+							outputLine.append(daysVerticalSeparator);
+							outputLine.append(vAxisValue);
+						}
 					}
 					if (col < yearViewColumns - 1) {
 						outputLine.append(monthsVerticalSeparator);
 					}
 				}
 				System.out.println(outputLine.toString());
-				renderHorizontalSeparator(daysHorizontalSeparator, outputLine.length());
+				lastOutputLineLength = outputLine.length();
+				renderHorizontalSeparator(daysHorizontalSeparator, lastOutputLineLength);
 			}
 			if ("l".equalsIgnoreCase(hAxisLinePosition)) {
 				System.out.println(hAxisLine.toString());
@@ -254,12 +268,22 @@ public class JCCal {
 			if ("l".equalsIgnoreCase(titleLinePosition)) {
 				System.out.println(titleLine.toString());
 			}
-			renderHorizontalSeparator(monthsHorizontalSeparator, hAxisLine.length());
+			renderHorizontalSeparator(monthsHorizontalSeparator, lastOutputLineLength);
+		}
+	}
+
+	private static void addSpaces(StringBuilder sb, int count) {
+		if (sb != null) {
+			for (int i = 0; i < count; i++) {
+				sb.append(" ");
+			}
 		}
 	}
 
 	private static String getAxisValue(MonthGrid monthGrid, boolean horizontal, boolean flipMonthView, int mRow, int mCol, String weekDaysCapital,
 			String weekNumberFormat) {
+		if (monthGrid == null)
+			return EMPTY_CELL;
 		String axisValue;
 		if (!flipMonthView && horizontal) {
 			axisValue = WEEK_DAYS_NAMES[flipMonthView ? mRow : mCol];
