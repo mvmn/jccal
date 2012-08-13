@@ -28,3 +28,6 @@ The API provides all basic functionality, like comparing dates (you can find out
 or number of months inbetween two YearMonth values; also simpler features are all there - like isBefore/isAfter/isSame methods),
 obtaining number of Day in year, Week in year and Day of week for YearMonthDay class.
 
+Some features of YearMonthDay "borrowed" from open sources:
+- Formula for calculating day of week - Zeller's congruence implementation, looked up somewhere on web (don't remember exactly if it was StackOverflow or some place else);
+- Calendar days difference calculation (used for unit test) - looked up here: http://tripoverit.blogspot.com/2007/07/java-calculate-difference-between-two.html
