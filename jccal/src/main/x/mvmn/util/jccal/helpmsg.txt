@@ -8,7 +8,7 @@ Parameters:
 	-fy - flip layout for year (months top to bottom instead of left to right).
 	-cols <val> - number of columns to render months in.
 	
-	-hl - render only highlights (current day, day of week, week number).
+	-hlonly - render only highlights (current day, day of week, week number).
 	-hldate <yyyy-mm-dd> - instead of highlighting today's date, highlight some other specific date.
 	-hly <val> - move highlight date year: pX - add X, mX - subtract X (m2 - for 2 years before, p3 - for 3 years after etc). 
 	-hlm <val> - move highlight date month: pX - add X, mX - subtract X (m2 - for 2 months before, p3 - for 3 months after etc). 
@@ -34,6 +34,7 @@ Parameters:
 	All newlines inside separator will be moved to the end of the line (i.e. pass in one line separator to have double line separation).
 	-mvs <val> - vertical separator inbetween months: any string.
 	-dvs <val> - vertical separator inbetween days: any string.
+	-nosep - render separators as spaces, keeping positions/spacing the same (horizontally and vertically).
 
 Notes/Known issues:
 	* Currently minus symbol (the "-") cannot be used within parameters values as parser recognizes it for start of next parameter.

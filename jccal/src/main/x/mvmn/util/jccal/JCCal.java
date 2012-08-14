@@ -90,6 +90,18 @@ public class JCCal {
 			monthsHorizontalSeparator = cliParams.get("mhs");
 		}
 
+		boolean hlOnly = cliParams.get("hlonly") != null;
+		if (hlOnly || cliParams.get("nosep") != null) {
+			daysVerticalSeparator = daysVerticalSeparator.replaceAll(".", " ");
+			monthsVerticalSeparator = monthsVerticalSeparator.replaceAll(".", " ");
+			if (daysHorizontalSeparator != null) {
+				daysHorizontalSeparator = daysHorizontalSeparator.replaceAll(".", " ");
+			}
+			if (monthsHorizontalSeparator != null) {
+				monthsHorizontalSeparator = monthsHorizontalSeparator.replaceAll("[^\n]", " ");
+			}
+		}
+
 		YearMonthDay highlightDay = new YearMonthDay(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH) - 1);
 		if (cliParams.get("hldate") != null && !cliParams.get("hldate").isEmpty()) {
 			try {
@@ -102,9 +114,9 @@ public class JCCal {
 			}
 		}
 		{
-			int hlYearOffset = CommandLineHelper.asInt(cliParams.get("hly"), 0);
-			int hlMonthOffset = CommandLineHelper.asInt(cliParams.get("hlm"), 0);
-			int hlDayOffset = CommandLineHelper.asInt(cliParams.get("hld"), 0);
+			int hlYearOffset = CommandLineHelper.relativeInt(cliParams.get("hly"));
+			int hlMonthOffset = CommandLineHelper.relativeInt(cliParams.get("hlm"));
+			int hlDayOffset = CommandLineHelper.relativeInt(cliParams.get("hld"));
 			highlightDay.addYearValue(hlYearOffset);
 			highlightDay.addMonthValue(hlMonthOffset);
 			highlightDay.addDayValue(hlDayOffset);
@@ -170,6 +182,9 @@ public class JCCal {
 			ymStart.addMonthValue(1);
 		}
 
+		int highlightDayOfWeek = highlightDay.getDayOfWeek();
+		int highlightWeekNumber = highlightDay.getWeekNumber();
+
 		int lastOutputLineLength = 0;
 		int mRowsCount = (flipMonthView ? 7 : 6);
 		int mColsCount = (flipMonthView ? 6 : 7);
@@ -179,8 +194,12 @@ public class JCCal {
 			for (int col = 0; col < yearViewColumns; col++) {
 				String titleText = "";
 				if (monthsData[row][col] != null) {
-					titleText = String.format(titleFormat, monthsData[row][col].getYear(), MONTHS_TITLES[monthsData[row][col].getMonth()],
-							monthsData[row][col].getMonth());
+					boolean thisMonth = (highlightDay.getYearValue() == monthsData[row][col].getYear() && highlightDay.getMonthValue() == monthsData[row][col]
+							.getMonth());
+					if (!hlOnly || thisMonth) {
+						titleText = String.format(titleFormat, monthsData[row][col].getYear(), MONTHS_TITLES[monthsData[row][col].getMonth()],
+								monthsData[row][col].getMonth());
+					}
 
 					int remainingLength = (2 + daysVerticalSeparator.length()) * mColsCount - daysVerticalSeparator.length() + monthsVerticalSeparator.length()
 							- titleText.length();
@@ -195,7 +214,8 @@ public class JCCal {
 						addSpaces(titleLine, daysVerticalSeparator.length());
 					}
 					for (int mCol = 0; mCol < mColsCount; mCol++) {
-						String hAxisValue = getAxisValue(monthsData[row][col], true, flipMonthView, 0, mCol, weekDaysNamesCapitalization, weekNumberFormat);
+						String hAxisValue = getAxisValue(monthsData[row][col], true, flipMonthView, 0, mCol, weekDaysNamesCapitalization, weekNumberFormat,
+								hlOnly, thisMonth, highlightDayOfWeek, highlightWeekNumber);
 						hAxisLine.append(hAxisValue);
 						if (mCol < mColsCount - 1) {
 							hAxisLine.append(daysVerticalSeparator);
@@ -221,7 +241,14 @@ public class JCCal {
 			for (int mRow = 0; mRow < mRowsCount; mRow++) {
 				StringBuilder outputLine = new StringBuilder();
 				for (int col = 0; col < yearViewColumns; col++) {
-					String vAxisValue = getAxisValue(monthsData[row][col], false, flipMonthView, mRow, 0, weekDaysNamesCapitalization, weekNumberFormat);
+					boolean thisMonth = false;
+					if (monthsData[row][col] != null) {
+						thisMonth = (highlightDay.getYearValue() == monthsData[row][col].getYear() && highlightDay.getMonthValue() == monthsData[row][col]
+								.getMonth());
+					}
+
+					String vAxisValue = getAxisValue(monthsData[row][col], false, flipMonthView, mRow, 0, weekDaysNamesCapitalization, weekNumberFormat,
+							hlOnly, thisMonth, highlightDayOfWeek, highlightWeekNumber);
 					if ("f".equalsIgnoreCase(vAxisLinePosition)) {
 						if (monthsData[row][col] != null) {
 							outputLine.append(vAxisValue);
@@ -233,7 +260,11 @@ public class JCCal {
 						if (monthsData[row][col] != null) {
 							int dayVal = monthsData[row][col].getValueAt(flipMonthView ? mCol : mRow, flipMonthView ? mRow : mCol);
 							if (dayVal >= 0) {
-								outputLine.append(String.format(dayNumberFormat, dayVal + 1));
+								if (!hlOnly || (thisMonth && highlightDay.getDayValue() == dayVal)) {
+									outputLine.append(String.format(dayNumberFormat, dayVal + 1));
+								} else {
+									outputLine.append(EMPTY_CELL);
+								}
 								filled = true;
 							}
 							if (!filled) {
@@ -281,25 +312,27 @@ public class JCCal {
 	}
 
 	private static String getAxisValue(MonthGrid monthGrid, boolean horizontal, boolean flipMonthView, int mRow, int mCol, String weekDaysCapital,
-			String weekNumberFormat) {
+			String weekNumberFormat, boolean hlOnly, boolean thisMonth, int hlWeekDay, int hlWeekNumber) {
 		if (monthGrid == null)
 			return EMPTY_CELL;
-		String axisValue;
-		if (!flipMonthView && horizontal) {
-			axisValue = WEEK_DAYS_NAMES[flipMonthView ? mRow : mCol];
-			if (weekDaysCapital != null) {
-				if ("u".equalsIgnoreCase(weekDaysCapital)) {
-					axisValue = axisValue.toUpperCase();
-				} else if ("l".equalsIgnoreCase(weekDaysCapital)) {
-					axisValue = axisValue.toLowerCase();
+		String axisValue = EMPTY_CELL;
+		if (flipMonthView ^ horizontal) {
+			if (!hlOnly || (thisMonth && (hlWeekDay == (flipMonthView ? mRow : mCol)))) {
+				axisValue = WEEK_DAYS_NAMES[flipMonthView ? mRow : mCol];
+				if (weekDaysCapital != null) {
+					if ("u".equalsIgnoreCase(weekDaysCapital)) {
+						axisValue = axisValue.toUpperCase();
+					} else if ("l".equalsIgnoreCase(weekDaysCapital)) {
+						axisValue = axisValue.toLowerCase();
+					}
 				}
 			}
 		} else {
 			int weekNumber = monthGrid.getWeekNumber(flipMonthView ? mCol : mRow);
 			if (weekNumber > 0) {
-				axisValue = String.format(weekNumberFormat, weekNumber);
-			} else {
-				axisValue = EMPTY_CELL;
+				if (!hlOnly || (thisMonth && weekNumber == hlWeekNumber)) {
+					axisValue = String.format(weekNumberFormat, weekNumber);
+				}
 			}
 		}
 		return axisValue;
