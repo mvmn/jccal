@@ -105,11 +105,11 @@ public class JCCal {
 		YearMonthDay highlightDay = new YearMonthDay(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH) - 1);
 		if (cliParams.get("hldate") != null && !cliParams.get("hldate").isEmpty()) {
 			try {
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				Date date = simpleDateFormat.parse(cliParams.get("hldate").trim());
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(date);
-				highlightDay.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_YEAR) - 1);
+				highlightDay.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH) - 1);
 			} catch (Exception e) {
 			}
 		}
