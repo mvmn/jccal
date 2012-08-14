@@ -37,6 +37,6 @@ Parameters:
 	-nosep - render separators as spaces, keeping positions/spacing the same (horizontally and vertically).
 
 Notes/Known issues:
-	* Currently minus symbol (the "-") cannot be used within parameters values as parser recognizes it for start of next parameter.
+	* In order to have minus symbols in parameters values each " -" (space, than minus) token should be passed as " \-".
 	* There is no way to change starting day of week at the moment - for now weeks always start on Monday. Also first week of the year
 	is computed using ISO rule, i.e. first week of the year to have 4 days (or equally, first week to include Thursday this year).

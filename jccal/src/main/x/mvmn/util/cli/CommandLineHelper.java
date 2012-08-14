@@ -10,19 +10,20 @@ public class CommandLineHelper {
 		Map<String, StringBuilder> resultBuilder = new HashMap<String, StringBuilder>();
 
 		if (args != null && args.length > 0) {
-			String key = null;
+			String key = "";
 			for (String arg : args) {
 				if (arg.startsWith("-")) {
 					key = arg.substring(1).toLowerCase();
 					resultBuilder.put(key, new StringBuilder());
 				} else {
-					if (key != null) {
-						StringBuilder value = resultBuilder.get(key);
-						if (value.length() > 0) {
-							value.append(" ");
-						}
-						value.append(arg);
+					StringBuilder value = resultBuilder.get(key);
+					if (value.length() > 0) {
+						value.append(" ");
 					}
+					if(arg.startsWith("\\")) {
+						arg = arg.substring(1);
+					}
+					value.append(arg);
 				}
 			}
 		}
