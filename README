@@ -8,6 +8,9 @@ Proper command line calendar output for GeekTool should support these features:
 - Relative start/end parameters, like -1 year to +1 year, -3 months to +3 months etc;
 - Nice to have are customizations of rendering: grid, spacing, show/hide week numbers etc.
 
+Execute with -help parameter to get usage help:
+	java -jar jccal.jar -help
+
 Example of usage (in bash/zsh):
 	java -jar jccal.jar -em p3 -sm m4 -cols 3 -pvx l -mhs " " -dvs "\!"
 	Here we ask JCCal to render months from 3 past 'til 2 next, in 3 columns, putting vertical axis values (weeks numbers in this case)
