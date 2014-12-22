@@ -13,3 +13,12 @@ bin/
 Icon?
 ehthumbs.db
 Thumbs.db
+
+
+.classpath
+.project
+.settings/
+bin/
+
+/jccal/target/
+/jccal/dependency-reduced-pom.xml
