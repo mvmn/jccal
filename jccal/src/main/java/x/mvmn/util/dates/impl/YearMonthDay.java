@@ -187,7 +187,7 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonthDay> implements 
 		int dayOfYear = getDayOfYear();
 		// Day of year number for week's frist day
 		int mondaysDayOfYear = (dayOfYear + 1) - getDayOfWeek();
-		
+
 		int thisWeeksDaysInThisYear = 365 + (getYear().isLeap() ? 1 : 0) - mondaysDayOfYear;
 		if (thisWeeksDaysInThisYear < 3) {
 			// This is already week 1 of next year

@@ -20,7 +20,7 @@ public class CommandLineHelper {
 					if (value.length() > 0) {
 						value.append(" ");
 					}
-					if(arg.startsWith("\\")) {
+					if (arg.startsWith("\\")) {
 						arg = arg.substring(1);
 					}
 					value.append(arg);

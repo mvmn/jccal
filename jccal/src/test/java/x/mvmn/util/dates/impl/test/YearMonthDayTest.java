@@ -135,11 +135,11 @@ public class YearMonthDayTest {
 			calPrev = (Calendar) cal.clone();
 			ymdPrev = (YearMonthDay) ymd.clone();
 		}
-		
+
 		cal.setMinimalDaysInFirstWeek(4);
 		cal.set(2008, 0, 30);
 		ymd.set(2008, 0, 29);
-		for (int i = 0; i < 365*6; i++) {
+		for (int i = 0; i < 365 * 6; i++) {
 			cal.add(Calendar.DAY_OF_YEAR, 1);
 			ymd.addDayValue(1);
 
@@ -148,7 +148,7 @@ public class YearMonthDayTest {
 			calPrev = (Calendar) cal.clone();
 			ymdPrev = (YearMonthDay) ymd.clone();
 		}
-		for (int i = 0; i < 365*6; i++) {
+		for (int i = 0; i < 365 * 6; i++) {
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			ymd.addDayValue(-1);
 
@@ -156,7 +156,7 @@ public class YearMonthDayTest {
 			doCompare(cal, calPrev, ymd, ymdPrev);
 			calPrev = (Calendar) cal.clone();
 			ymdPrev = (YearMonthDay) ymd.clone();
-		}		
+		}
 	}
 
 	private void doCompare(Calendar cal, Calendar calPrev, YearMonthDay ymd, YearMonthDay ymdPrev) {
@@ -166,7 +166,7 @@ public class YearMonthDayTest {
 		assertEquals("Comparng day of week", (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7, ymd.getDayOfWeek());
 		assertEquals("Comparing week of year", cal.get(Calendar.WEEK_OF_YEAR), ymd.getWeekNumber());
 		assertEquals("Comparing delta calc", daysBetween(cal, calPrev), ymd.compareTo(ymdPrev));
-		assertEquals("Comparing day of year", cal.get(Calendar.DAY_OF_YEAR), ymd.getDayOfYear()+1);
+		assertEquals("Comparing day of year", cal.get(Calendar.DAY_OF_YEAR), ymd.getDayOfYear() + 1);
 	}
 
 	private void debug(int n, Calendar cal, int calDelta, YearMonthDay ymd, int ymdDelta) {
@@ -174,9 +174,9 @@ public class YearMonthDayTest {
 		String dowName[] = { "MO", "TU", "WE", "TH", "FR", "SA", "SU" };
 
 		System.out.format("Adding %10d: %04d-%02d-%02d (%s, week %02d, DoY %03d) [D%8d]   ==   %04d-%02d-%02d (%s, week %02d, DoY %03d) [D%8d]\n", n, cal.get(Calendar.YEAR),
-				(cal.get(Calendar.MONTH) + 1), cal.get(Calendar.DAY_OF_MONTH), dowName[(cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7],
-				cal.get(Calendar.WEEK_OF_YEAR), cal.get(Calendar.DAY_OF_YEAR), calDelta, ymd.getYearValue(), ymd.getMonthValue() + 1, ymd.getDayValue() + 1, dowName[ymd.getDayOfWeek()],
-				ymd.getWeekNumber(), ymd.getDayOfYear()+1, ymdDelta);
+				(cal.get(Calendar.MONTH) + 1), cal.get(Calendar.DAY_OF_MONTH), dowName[(cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7], cal.get(Calendar.WEEK_OF_YEAR),
+				cal.get(Calendar.DAY_OF_YEAR), calDelta, ymd.getYearValue(), ymd.getMonthValue() + 1, ymd.getDayValue() + 1, dowName[ymd.getDayOfWeek()], ymd.getWeekNumber(),
+				ymd.getDayOfYear() + 1, ymdDelta);
 	}
 
 	public static int daysBetween(final Calendar endDate, final Calendar startDate) {
