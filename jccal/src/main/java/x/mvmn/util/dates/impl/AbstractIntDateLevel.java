@@ -2,7 +2,8 @@ package x.mvmn.util.dates.impl;
 
 import x.mvmn.util.dates.DateComparable;
 
-public abstract class AbstractIntDateLevel<T> implements DateComparable<AbstractIntDateLevel<T>> {
+public abstract class AbstractIntDateLevel<T> implements
+		DateComparable<AbstractIntDateLevel<T>> {
 
 	protected abstract DateComparable<AbstractIntDateLevel<?>> getSupervalue();
 
@@ -33,11 +34,13 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 					this.internalValue = 0;
 					superlevelCorrection++;
 				}
-				getSupervalue().getThis().addValueInternal(superlevelCorrection);
+				getSupervalue().getThis()
+						.addValueInternal(superlevelCorrection);
 			} else if (internalValue >= getInternalValueLimit()) {
 				int superlevelCorrection = (internalValue / limit);
 				this.internalValue = (internalValue % limit);
-				getSupervalue().getThis().addValueInternal(superlevelCorrection);
+				getSupervalue().getThis()
+						.addValueInternal(superlevelCorrection);
 			}
 		}
 	}
@@ -50,11 +53,15 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 		if (getSupervalue() != null) {
 			if (getSupervalue().isAfter(comparison.getThis().getSupervalue())) {
 				result = true;
-			} else if (getSupervalue().isSame(comparison.getThis().getSupervalue()) && this.internalValue > comparison.getThis().getValueInternal()) {
+			} else if (getSupervalue().isSame(
+					comparison.getThis().getSupervalue())
+					&& this.internalValue > comparison.getThis()
+							.getValueInternal()) {
 				result = true;
 			}
 		} else {
-			result = this.internalValue > comparison.getThis().getValueInternal();
+			result = this.internalValue > comparison.getThis()
+					.getValueInternal();
 		}
 		return result;
 	}
@@ -67,11 +74,15 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 		if (getSupervalue() != null) {
 			if (getSupervalue().isBefore(comparison.getThis().getSupervalue())) {
 				result = true;
-			} else if (getSupervalue().isSame(comparison.getThis().getSupervalue()) && this.internalValue < comparison.getThis().getValueInternal()) {
+			} else if (getSupervalue().isSame(
+					comparison.getThis().getSupervalue())
+					&& this.internalValue < comparison.getThis()
+							.getValueInternal()) {
 				result = true;
 			}
 		} else {
-			result = this.internalValue < comparison.getThis().getValueInternal();
+			result = this.internalValue < comparison.getThis()
+					.getValueInternal();
 		}
 		return result;
 	}
@@ -82,11 +93,14 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 			return true;
 		boolean result = false;
 		if (getSupervalue() != null) {
-			if (getSupervalue().isSame(comparison.getThis().getSupervalue()) && this.internalValue == comparison.getThis().getValueInternal()) {
+			if (getSupervalue().isSame(comparison.getThis().getSupervalue())
+					&& this.internalValue == comparison.getThis()
+							.getValueInternal()) {
 				result = true;
 			}
 		} else {
-			result = this.internalValue == comparison.getThis().getValueInternal();
+			result = this.internalValue == comparison.getThis()
+					.getValueInternal();
 		}
 		return result;
 	}
@@ -96,13 +110,17 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 		if (comparison == null) {
 			delta = getValueInternal();
 		} else {
-			delta = getValueInternal() - comparison.getThis().getValueInternal();
+			delta = getValueInternal()
+					- comparison.getThis().getValueInternal();
 		}
 		if (this.getSupervalue() != null) {
 			if (comparison == null) {
-				delta += this.getSupervalue().getThis().getValueInternal() * this.getInternalValueLimit();
+				delta += this.getSupervalue().getThis().getValueInternal()
+						* this.getInternalValueLimit();
 			} else {
-				delta += this.getSupervalue().compareTo(comparison.getThis().getSupervalue()) * this.getInternalValueLimit();
+				delta += this.getSupervalue().compareTo(
+						comparison.getThis().getSupervalue())
+						* this.getInternalValueLimit();
 			}
 		}
 		return delta;

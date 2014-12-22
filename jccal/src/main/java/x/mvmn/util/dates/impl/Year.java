@@ -1,11 +1,12 @@
 package x.mvmn.util.dates.impl;
 
+import x.mvmn.util.dates.DateComparable;
 import x.mvmn.util.dates.Yearable;
 
 public class Year extends AbstractIntDateLevel<Year> implements Yearable, Cloneable {
 
 	@Override
-	protected AbstractIntDateLevel<?> getSupervalue() {
+	protected DateComparable<AbstractIntDateLevel<?>> getSupervalue() {
 		return null;
 	}
 

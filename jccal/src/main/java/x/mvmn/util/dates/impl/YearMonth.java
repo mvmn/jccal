@@ -3,13 +3,14 @@ package x.mvmn.util.dates.impl;
 import x.mvmn.util.dates.Monthable;
 import x.mvmn.util.dates.Yearable;
 
-public class YearMonth extends AbstractIntDateLevel<YearMonth> implements Yearable, Monthable, Cloneable {
+public class YearMonth extends AbstractIntDateLevel<YearMonth> implements
+		Yearable, Monthable, Cloneable {
 
 	private Year year = new Year();
 
 	@Override
 	protected AbstractIntDateLevel<?> getSupervalue() {
-		return year;
+		return year.getThis();
 	}
 
 	@Override
@@ -69,7 +70,8 @@ public class YearMonth extends AbstractIntDateLevel<YearMonth> implements Yearab
 		return year.getValueInternal();
 	}
 
-	private static final int[] DAYS_IN_MONTHS = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	private static final int[] DAYS_IN_MONTHS = { 31, 28, 31, 30, 31, 30, 31,
+			31, 30, 31, 30, 31 };
 
 	public static int getNumberOfDaysInMonth(int year, int month) {
 		int result = DAYS_IN_MONTHS[month];
@@ -90,7 +92,8 @@ public class YearMonth extends AbstractIntDateLevel<YearMonth> implements Yearab
 	}
 
 	public String toString() {
-		return String.format("%04d-%02d", this.getYearValue(), this.getMonthValue() + 1);
+		return String.format("%04d-%02d", this.getYearValue(),
+				this.getMonthValue() + 1);
 	}
 
 	public YearMonth clone() {

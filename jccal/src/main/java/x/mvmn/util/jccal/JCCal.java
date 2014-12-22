@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import x.mvmn.util.cli.CommandLineHelper;
 import x.mvmn.util.dates.impl.YearMonth;
-import x.mvmn.util.dates.impl.YearMonthDay;
 import x.mvmn.util.jccal.model.MonthGrid;
 
 public class JCCal {
@@ -150,6 +149,10 @@ public class JCCal {
 				}
 			}
 		}
+
+
+		//YearMonthDay ymdToday = new YearMonthDay(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH) - 1);
+		// System.out.println("Months to fill: "+ymEnd.compareTo(ymStart));
 
 		// Calculate values
 		int yearViewRows = (int) Math.ceil(((double) ymEnd.compareTo(ymStart) + 1) / (double) yearViewColumns);
