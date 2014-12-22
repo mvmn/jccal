@@ -1,0 +1,18 @@
+Usage:
+	java -jar jccal.jar [params]
+
+Parameters:
+	-help - print this help message and exit.
+	-fm - flip layout for months (columns: weeks, rows: days of week).
+	-fy - flip layout for year (months top to bottom instead of left to right).
+	-sy <val> - start year - absolute (2012 etc) or relative (m3 - for 3 before, p2 - for 2 after etc).
+	-ey <val> - end year - absolute or relative.
+	-sm <val> - start month - absolute (12 etc) or relative (m2 - for 2 before, p3 - for 3 after etc).
+	-em <val> - end month - absolute or relative.
+	-wn <val> - week number render: f, l or n - first (left/top), last (right/bottom) or none.
+	-dw <val> - day of week render: f, l or n - first (left/top), last (right/bottom) or none.
+	-mhs <val> - horizontal separator inbetween months: any string.
+	-mvs <val> - vertical separator inbetween months: any string.
+	-dhs <val> - horizontal separator inbetween days: any string.
+	-dvs <val> - vertical separator inbetween days: any string.
+	-cols <val> - number of columns to render months in.
