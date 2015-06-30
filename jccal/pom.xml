@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>x.mvmn.jccal</groupId>
 	<artifactId>jccal</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,15 +22,11 @@
 					<!-- or whatever version you use -->
 					<source>1.6</source>
 					<target>1.6</target>
-					<compilerId>eclipse</compilerId>
+					<!-- compilerId>eclipse</compilerId -->
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.plexus</groupId>
-						<artifactId>plexus-compiler-eclipse</artifactId>
-						<version>2.3</version>
-					</dependency>
-				</dependencies>
+				<!-- dependencies> <dependency> <groupId>org.codehaus.plexus</groupId> 
+					<artifactId>plexus-compiler-eclipse</artifactId> <version>2.3</version> </dependency> 
+					</dependencies -->
 			</plugin>
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>

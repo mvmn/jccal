@@ -1,15 +1,21 @@
 package x.mvmn.util.dates.impl;
 
+import x.mvmn.util.dates.DateComparable;
 import x.mvmn.util.dates.Monthable;
 import x.mvmn.util.dates.Yearable;
 
-public class YearMonth extends AbstractIntDateLevel<YearMonth> implements Yearable, Monthable, Cloneable {
+public class YearMonth extends AbstractIntDateLevel<Year, YearMonth> implements Yearable, Monthable, Cloneable {
 
 	private Year year = new Year();
+	
+	@Override
+	public YearMonth getThis() {
+		return this;
+	}
 
 	@Override
-	protected AbstractIntDateLevel<?> getSupervalue() {
-		return year.getThis();
+	protected DateComparable<Year> getSupervalue() {
+		return year;
 	}
 
 	@Override
@@ -96,5 +102,4 @@ public class YearMonth extends AbstractIntDateLevel<YearMonth> implements Yearab
 	public YearMonth clone() {
 		return new YearMonth(this.getYearValue(), this.getMonthValue());
 	}
-
 }

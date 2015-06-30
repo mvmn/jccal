@@ -2,9 +2,9 @@ package x.mvmn.util.dates.impl;
 
 import x.mvmn.util.dates.DateComparable;
 
-public abstract class AbstractIntDateLevel<T> implements DateComparable<AbstractIntDateLevel<T>> {
+public abstract class AbstractIntDateLevel<P extends AbstractIntDateLevel<?, P>, T extends AbstractIntDateLevel<P, T>> implements DateComparable<T> {
 
-	protected abstract DateComparable<AbstractIntDateLevel<?>> getSupervalue();
+	protected abstract DateComparable<P> getSupervalue();
 
 	protected abstract int getInternalValueLimit();
 
@@ -43,7 +43,7 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 	}
 
 	@Override
-	public boolean isAfter(DateComparable<AbstractIntDateLevel<T>> comparison) {
+	public boolean isAfter(DateComparable<T> comparison) {
 		if (comparison == null)
 			return false;
 		boolean result = false;
@@ -60,7 +60,7 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 	}
 
 	@Override
-	public boolean isBefore(DateComparable<AbstractIntDateLevel<T>> comparison) {
+	public boolean isBefore(DateComparable<T> comparison) {
 		if (comparison == null)
 			return false;
 		boolean result = false;
@@ -77,7 +77,7 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 	}
 
 	@Override
-	public boolean isSame(DateComparable<AbstractIntDateLevel<T>> comparison) {
+	public boolean isSame(DateComparable<T> comparison) {
 		if (comparison == null)
 			return true;
 		boolean result = false;
@@ -91,7 +91,7 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 		return result;
 	}
 
-	public int compareTo(DateComparable<AbstractIntDateLevel<T>> comparison) {
+	public int compareTo(DateComparable<T> comparison) {
 		int delta = 0;
 		if (comparison == null) {
 			delta = getValueInternal();
@@ -108,12 +108,7 @@ public abstract class AbstractIntDateLevel<T> implements DateComparable<Abstract
 		return delta;
 	}
 
-	@Override
-	public AbstractIntDateLevel<T> getThis() {
-		return this;
-	}
-
-	public boolean equals(DateComparable<AbstractIntDateLevel<T>> comparison) {
+	public boolean equals(DateComparable<T> comparison) {
 		if (comparison == null)
 			return false;
 		return this.isSame(comparison);

@@ -5,7 +5,7 @@ import x.mvmn.util.dates.Dayable;
 import x.mvmn.util.dates.Monthable;
 import x.mvmn.util.dates.Yearable;
 
-public class YearMonthDay extends AbstractIntDateLevel<YearMonthDay> implements Yearable, Monthable, Dayable, Cloneable {
+public class YearMonthDay extends AbstractIntDateLevel<YearMonth, YearMonthDay> implements Yearable, Monthable, Dayable, Cloneable {
 
 	private class DayCorrectingYearMonth extends YearMonth {
 
@@ -47,7 +47,12 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonthDay> implements 
 	}
 
 	@Override
-	protected AbstractIntDateLevel<?> getSupervalue() {
+	public YearMonthDay getThis() {
+		return this;
+	}
+
+	@Override
+	protected DateComparable<YearMonth> getSupervalue() {
 		return yearMonth;
 	}
 
@@ -212,7 +217,7 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonthDay> implements 
 		return 1 + fullWeeks + (reminderWeek > 4 ? 1 : 0);
 	}
 
-	public int compareTo(DateComparable<AbstractIntDateLevel<YearMonthDay>> comparison) {
+	public int compareTo(DateComparable<YearMonthDay> comparison) {
 		int delta = 0;
 		if (comparison == null) {
 			delta = getValueInternal();
@@ -249,5 +254,4 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonthDay> implements 
 	public String toString() {
 		return String.format("%04d-%02d-%02d", this.getYearValue(), this.getMonthValue() + 1, this.getDayValue() + 1);
 	}
-
 }
