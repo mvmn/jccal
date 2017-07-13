@@ -8,20 +8,21 @@ import x.mvmn.util.dates.Yearable;
 public class YearMonthDay extends AbstractIntDateLevel<YearMonth, YearMonthDay> implements Yearable, Monthable, Dayable, Cloneable {
 
 	private class DayCorrectingYearMonth extends YearMonth {
-
 		public DayCorrectingYearMonth() {
 			super(1980, 0);
 			setValueInternal(0);
 		}
 
-		public void setMonthValue(int month) {
+		public DayCorrectingYearMonth setMonthValue(int month) {
 			setValueInternal(month);
 			YearMonthDay.this.correctAfterMonthSet();
+			return this;
 		}
 
-		public void addMonthValue(int delta) {
+		public DayCorrectingYearMonth addMonthValue(int delta) {
 			addValueInternal(delta);
 			YearMonthDay.this.correctAfterMonthAdd();
+			return this;
 		}
 	};
 
@@ -87,20 +88,23 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonth, YearMonthDay> 
 		set(year, month, day);
 	}
 
-	public void set(int year, int month, int day) {
+	public YearMonthDay set(int year, int month, int day) {
 		setYearValue(year);
 		setMonthValue(month);
 		setDayValue(day);
+		return this;
 	}
 
 	@Override
-	public void setDayValue(int day) {
+	public YearMonthDay setDayValue(int day) {
 		setValueInternal(day);
+		return this;
 	}
 
 	@Override
-	public void addDayValue(int delta) {
+	public YearMonthDay addDayValue(int delta) {
 		addValueInternal(delta);
+		return this;
 	}
 
 	@Override
@@ -114,13 +118,15 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonth, YearMonthDay> 
 	}
 
 	@Override
-	public void setMonthValue(int month) {
+	public YearMonthDay setMonthValue(int month) {
 		yearMonth.setMonthValue(month);
+		return this;
 	}
 
 	@Override
-	public void addMonthValue(int delta) {
+	public YearMonthDay addMonthValue(int delta) {
 		yearMonth.addMonthValue(delta);
+		return this;
 	}
 
 	@Override
@@ -134,13 +140,15 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonth, YearMonthDay> 
 	}
 
 	@Override
-	public void setYearValue(int year) {
+	public YearMonthDay setYearValue(int year) {
 		yearMonth.setYearValue(year);
+		return this;
 	}
 
 	@Override
-	public void addYearValue(int delta) {
+	public YearMonthDay addYearValue(int delta) {
 		yearMonth.addYearValue(delta);
+		return this;
 	}
 
 	@Override

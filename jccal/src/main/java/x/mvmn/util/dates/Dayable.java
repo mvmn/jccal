@@ -1,9 +1,9 @@
 package x.mvmn.util.dates;
 
 public interface Dayable {
-	public void setDayValue(int day);
+	public Dayable setDayValue(int day);
 
-	public void addDayValue(int delta);
+	public Dayable addDayValue(int delta);
 
 	public int getDayValue();
 

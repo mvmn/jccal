@@ -91,6 +91,11 @@ public abstract class AbstractIntDateLevel<P extends AbstractIntDateLevel<?, P>,
 		return result;
 	}
 
+	@Override
+	public int hashCode() {
+		return this.internalValue + 13 * (getSupervalue() != null ? getSupervalue().hashCode() : 0);
+	}
+
 	public int compareTo(DateComparable<T> comparison) {
 		int delta = 0;
 		if (comparison == null) {

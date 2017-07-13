@@ -7,7 +7,7 @@ import x.mvmn.util.dates.Yearable;
 public class YearMonth extends AbstractIntDateLevel<Year, YearMonth> implements Yearable, Monthable, Cloneable {
 
 	private Year year = new Year();
-	
+
 	@Override
 	public YearMonth getThis() {
 		return this;
@@ -35,19 +35,22 @@ public class YearMonth extends AbstractIntDateLevel<Year, YearMonth> implements 
 		return year;
 	}
 
-	public void set(int year, int month) {
+	public YearMonth set(int year, int month) {
 		setYearValue(year);
 		setValueInternal(month);
+		return this;
 	}
 
 	@Override
-	public void setMonthValue(int month) {
+	public YearMonth setMonthValue(int month) {
 		this.setValueInternal(month);
+		return this;
 	}
 
 	@Override
-	public void addMonthValue(int delta) {
+	public YearMonth addMonthValue(int delta) {
 		this.addValueInternal(delta);
+		return this;
 	}
 
 	@Override
@@ -61,13 +64,15 @@ public class YearMonth extends AbstractIntDateLevel<Year, YearMonth> implements 
 	}
 
 	@Override
-	public void setYearValue(int year) {
+	public YearMonth setYearValue(int year) {
 		this.year.setValueInternal(year);
+		return this;
 	}
 
 	@Override
-	public void addYearValue(int delta) {
+	public YearMonth addYearValue(int delta) {
 		this.year.addValueInternal(delta);
+		return this;
 	}
 
 	@Override

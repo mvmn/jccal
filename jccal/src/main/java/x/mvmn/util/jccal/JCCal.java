@@ -21,7 +21,8 @@ import x.mvmn.util.jccal.model.MonthGrid;
 public class JCCal {
 
 	private static String[] WEEK_DAYS_NAMES = { "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su" };
-	private static String[] MONTHS_TITLES = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+	private static String[] MONTHS_TITLES = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
+			"December" };
 	private static String EMPTY_CELL = "  ";
 
 	public static void main(String[] args) {
@@ -197,9 +198,11 @@ public class JCCal {
 			for (int col = 0; col < yearViewColumns; col++) {
 				String titleText = "";
 				if (monthsData[row][col] != null) {
-					boolean thisMonth = (highlightDay.getYearValue() == monthsData[row][col].getYear() && highlightDay.getMonthValue() == monthsData[row][col].getMonth());
+					boolean thisMonth = (highlightDay.getYearValue() == monthsData[row][col].getYear()
+							&& highlightDay.getMonthValue() == monthsData[row][col].getMonth());
 					if (!hlOnly || thisMonth) {
-						titleText = String.format(titleFormat, monthsData[row][col].getYear(), MONTHS_TITLES[monthsData[row][col].getMonth()], monthsData[row][col].getMonth());
+						titleText = String.format(titleFormat, monthsData[row][col].getYear(), MONTHS_TITLES[monthsData[row][col].getMonth()],
+								monthsData[row][col].getMonth());
 					}
 
 					int remainingLength = (2 + daysVerticalSeparator.length()) * mColsCount - daysVerticalSeparator.length() + monthsVerticalSeparator.length()
@@ -215,8 +218,8 @@ public class JCCal {
 						addSpaces(titleLine, daysVerticalSeparator.length());
 					}
 					for (int mCol = 0; mCol < mColsCount; mCol++) {
-						String hAxisValue = getAxisValue(monthsData[row][col], true, flipMonthView, 0, mCol, weekDaysNamesCapitalization, weekNumberFormat, hlOnly, thisMonth,
-								highlightDayOfWeek, highlightWeekNumber);
+						String hAxisValue = getAxisValue(monthsData[row][col], true, flipMonthView, 0, mCol, weekDaysNamesCapitalization, weekNumberFormat,
+								hlOnly, thisMonth, highlightDayOfWeek, highlightWeekNumber);
 						hAxisLine.append(hAxisValue);
 						if (mCol < mColsCount - 1) {
 							hAxisLine.append(daysVerticalSeparator);
@@ -244,11 +247,12 @@ public class JCCal {
 				for (int col = 0; col < yearViewColumns; col++) {
 					boolean thisMonth = false;
 					if (monthsData[row][col] != null) {
-						thisMonth = (highlightDay.getYearValue() == monthsData[row][col].getYear() && highlightDay.getMonthValue() == monthsData[row][col].getMonth());
+						thisMonth = (highlightDay.getYearValue() == monthsData[row][col].getYear()
+								&& highlightDay.getMonthValue() == monthsData[row][col].getMonth());
 					}
 
-					String vAxisValue = getAxisValue(monthsData[row][col], false, flipMonthView, mRow, 0, weekDaysNamesCapitalization, weekNumberFormat, hlOnly, thisMonth,
-							highlightDayOfWeek, highlightWeekNumber);
+					String vAxisValue = getAxisValue(monthsData[row][col], false, flipMonthView, mRow, 0, weekDaysNamesCapitalization, weekNumberFormat, hlOnly,
+							thisMonth, highlightDayOfWeek, highlightWeekNumber);
 					if ("f".equalsIgnoreCase(vAxisLinePosition)) {
 						if (monthsData[row][col] != null) {
 							outputLine.append(vAxisValue);
@@ -311,8 +315,8 @@ public class JCCal {
 		}
 	}
 
-	private static String getAxisValue(MonthGrid monthGrid, boolean horizontal, boolean flipMonthView, int mRow, int mCol, String weekDaysCapital, String weekNumberFormat,
-			boolean hlOnly, boolean thisMonth, int hlWeekDay, int hlWeekNumber) {
+	private static String getAxisValue(MonthGrid monthGrid, boolean horizontal, boolean flipMonthView, int mRow, int mCol, String weekDaysCapital,
+			String weekNumberFormat, boolean hlOnly, boolean thisMonth, int hlWeekDay, int hlWeekNumber) {
 		if (monthGrid == null)
 			return EMPTY_CELL;
 		String axisValue = EMPTY_CELL;

@@ -28,12 +28,14 @@ public class Year extends AbstractIntDateLevel<Year, Year> implements Yearable, 
 		setValueInternal(year);
 	}
 
-	public void setYearValue(int year) {
+	public Year setYearValue(int year) {
 		this.setValueInternal(year);
+		return this;
 	}
 
-	public void addYearValue(int delta) {
+	public Year addYearValue(int delta) {
 		this.addValueInternal(delta);
+		return this;
 	}
 
 	public int getYearValue() {

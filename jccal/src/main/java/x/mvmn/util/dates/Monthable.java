@@ -1,9 +1,9 @@
 package x.mvmn.util.dates;
 
 public interface Monthable {
-	public void setMonthValue(int month);
+	public Monthable setMonthValue(int month);
 
-	public void addMonthValue(int delta);
+	public Monthable addMonthValue(int delta);
 
 	public int getMonthValue();
 

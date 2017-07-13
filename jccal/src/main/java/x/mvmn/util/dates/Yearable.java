@@ -1,9 +1,9 @@
 package x.mvmn.util.dates;
 
 public interface Yearable {
-	public void setYearValue(int year);
+	public Yearable setYearValue(int year);
 
-	public void addYearValue(int delta);
+	public Yearable addYearValue(int delta);
 
 	public int getYearValue();
 

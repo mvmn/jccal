@@ -1,20 +1,26 @@
 package x.mvmn.util.dates.impl.test;
 
-import static org.junit.Assert.*;
-
 import java.util.Calendar;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import x.mvmn.util.dates.impl.YearMonthDay;
 
 public class YearMonthDayTest {
 
-	private YearMonthDay ymd = new YearMonthDay();
+	@Test
+	public void testHashCode() {
+		Assert.assertNotEquals(0, new YearMonthDay(1600, 0, 0).hashCode());
+		Assert.assertNotEquals(0, new YearMonthDay(2017, 10, 20).hashCode());
+		Assert.assertEquals(new YearMonthDay(1600, 0, 0).hashCode(), new YearMonthDay(1600, 0, 0).hashCode());
+		Assert.assertEquals(new YearMonthDay(2017, 10, 20).hashCode(), new YearMonthDay(2017, 10, 10).addDayValue(10).hashCode());
+		Assert.assertEquals(new YearMonthDay(2017, 10, 20).addDayValue(-10).hashCode(), new YearMonthDay(2017, 10, 10).hashCode());
+	}
 
 	@Test
 	public void test() {
-		ymd = new YearMonthDay(1600, 0, 0);
+		YearMonthDay ymd = new YearMonthDay(1600, 0, 0);
 		Calendar cal = Calendar.getInstance();
 		cal.setFirstDayOfWeek(Calendar.MONDAY);
 		cal.setMinimalDaysInFirstWeek(4);
@@ -160,23 +166,24 @@ public class YearMonthDayTest {
 	}
 
 	private void doCompare(Calendar cal, Calendar calPrev, YearMonthDay ymd, YearMonthDay ymdPrev) {
-		assertEquals("Comparing year", cal.get(Calendar.YEAR), ymd.getYearValue());
-		assertEquals("Comparing month", cal.get(Calendar.MONTH), ymd.getMonthValue());
-		assertEquals("Comparing day of month", cal.get(Calendar.DAY_OF_MONTH), ymd.getDayValue() + 1);
-		assertEquals("Comparng day of week", (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7, ymd.getDayOfWeek());
-		assertEquals("Comparing week of year", cal.get(Calendar.WEEK_OF_YEAR), ymd.getWeekNumber());
-		assertEquals("Comparing delta calc", daysBetween(cal, calPrev), ymd.compareTo(ymdPrev));
-		assertEquals("Comparing day of year", cal.get(Calendar.DAY_OF_YEAR), ymd.getDayOfYear() + 1);
+		Assert.assertEquals("Comparing year", cal.get(Calendar.YEAR), ymd.getYearValue());
+		Assert.assertEquals("Comparing month", cal.get(Calendar.MONTH), ymd.getMonthValue());
+		Assert.assertEquals("Comparing day of month", cal.get(Calendar.DAY_OF_MONTH), ymd.getDayValue() + 1);
+		Assert.assertEquals("Comparng day of week", (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7, ymd.getDayOfWeek());
+		Assert.assertEquals("Comparing week of year", cal.get(Calendar.WEEK_OF_YEAR), ymd.getWeekNumber());
+		Assert.assertEquals("Comparing delta calc", daysBetween(cal, calPrev), ymd.compareTo(ymdPrev));
+		Assert.assertEquals("Comparing day of year", cal.get(Calendar.DAY_OF_YEAR), ymd.getDayOfYear() + 1);
 	}
 
 	private void debug(int n, Calendar cal, int calDelta, YearMonthDay ymd, int ymdDelta) {
 
 		String dowName[] = { "MO", "TU", "WE", "TH", "FR", "SA", "SU" };
 
-		System.out.format("Adding %10d: %04d-%02d-%02d (%s, week %02d, DoY %03d) [D%8d]   ==   %04d-%02d-%02d (%s, week %02d, DoY %03d) [D%8d]\n", n, cal.get(Calendar.YEAR),
-				(cal.get(Calendar.MONTH) + 1), cal.get(Calendar.DAY_OF_MONTH), dowName[(cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7], cal.get(Calendar.WEEK_OF_YEAR),
-				cal.get(Calendar.DAY_OF_YEAR), calDelta, ymd.getYearValue(), ymd.getMonthValue() + 1, ymd.getDayValue() + 1, dowName[ymd.getDayOfWeek()], ymd.getWeekNumber(),
-				ymd.getDayOfYear() + 1, ymdDelta);
+		System.out.format("Adding %10d: %04d-%02d-%02d (%s, week %02d, DoY %03d) [D%8d]   ==   %04d-%02d-%02d (%s, week %02d, DoY %03d) [D%8d]\n", n,
+				cal.get(Calendar.YEAR), (cal.get(Calendar.MONTH) + 1), cal.get(Calendar.DAY_OF_MONTH),
+				dowName[(cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7], cal.get(Calendar.WEEK_OF_YEAR), cal.get(Calendar.DAY_OF_YEAR), calDelta,
+				ymd.getYearValue(), ymd.getMonthValue() + 1, ymd.getDayValue() + 1, dowName[ymd.getDayOfWeek()], ymd.getWeekNumber(), ymd.getDayOfYear() + 1,
+				ymdDelta);
 	}
 
 	public static int daysBetween(final Calendar endDate, final Calendar startDate) {
