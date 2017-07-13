@@ -29,7 +29,7 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonth, YearMonthDay> 
 	private YearMonth yearMonth = new DayCorrectingYearMonth();
 
 	protected void correctAfterMonthAdd() {
-		if (getInternalValueLimit() < getValueInternal()) {
+		if (getInternalValueLimit() <= getValueInternal()) {
 			int delta = getValueInternal() - getInternalValueLimit();
 			setValueInternal(getInternalValueLimit());
 			addDayValue(delta);
@@ -37,7 +37,7 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonth, YearMonthDay> 
 	}
 
 	protected void correctAfterMonthSet() {
-		if (getInternalValueLimit() < getValueInternal()) {
+		if (getInternalValueLimit() <= getValueInternal()) {
 			// No transitioning to next month:
 			// if we have 31-st of Dec and set month = Feb
 			// we want to end up 28/29-th of Feb, not 2/3 of Mar
@@ -59,7 +59,7 @@ public class YearMonthDay extends AbstractIntDateLevel<YearMonth, YearMonthDay> 
 
 	@Override
 	protected int getInternalValueLimit() {
-		return yearMonth.getNumberOfDaysInCurrentMonth();
+		return yearMonth.getNumberOfDaysInCurrentMonth() - 1;
 	}
 
 	@Override

@@ -79,7 +79,7 @@ public abstract class AbstractIntDateLevel<P extends AbstractIntDateLevel<?, P>,
 	@Override
 	public boolean isSame(DateComparable<T> comparison) {
 		if (comparison == null)
-			return true;
+			return false;
 		boolean result = false;
 		if (getSupervalue() != null) {
 			if (getSupervalue().isSame(comparison.getThis().getSupervalue()) && this.internalValue == comparison.getThis().getValueInternal()) {
@@ -113,9 +113,13 @@ public abstract class AbstractIntDateLevel<P extends AbstractIntDateLevel<?, P>,
 		return delta;
 	}
 
-	public boolean equals(DateComparable<T> comparison) {
-		if (comparison == null)
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object comparison) {
+		if (comparison == null || !(comparison instanceof DateComparable)
+				|| !(((DateComparable<?>) comparison).getThis().getClass().equals(getThis().getClass()))) {
 			return false;
-		return this.isSame(comparison);
+		}
+		return this.isSame((DateComparable<T>) comparison);
 	}
 }

@@ -9,7 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,18 +104,33 @@ public class JCCal {
 			}
 		}
 
-		final YearMonthDay highlightDay = new YearMonthDay(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH) - 1);
+		YearMonthDay highlightDay = new YearMonthDay(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH) - 1);
+		Set<YearMonthDay> highlightDays = new HashSet<YearMonthDay>();
 		if (cliParams.get("hldate") != null && !cliParams.get("hldate").isEmpty()) {
-			try {
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				Date date = simpleDateFormat.parse(cliParams.get("hldate").trim());
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String[] hlDays = cliParams.get("hldate").trim().split("\\s*,\\s*");
+			if (hlDays.length == 1) {
+				try {
+					Date date = simpleDateFormat.parse(hlDays[0]);
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(date);
+					highlightDay.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH) - 1);
+				} catch (Exception e) {
+					highlightDay = null;
+				}
+			} else {
+				highlightDay = null;
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(date);
-				highlightDay.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH) - 1);
-			} catch (Exception e) {
+				for (String val : hlDays) {
+					try {
+						cal.setTime(simpleDateFormat.parse(val));
+						highlightDays.add(new YearMonthDay(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH) - 1));
+					} catch (Exception e) {
+					}
+				}
 			}
 		}
-		{
+		if (highlightDay != null) {
 			int hlYearOffset = CommandLineHelper.relativeInt(cliParams.get("hly"));
 			int hlMonthOffset = CommandLineHelper.relativeInt(cliParams.get("hlm"));
 			int hlDayOffset = CommandLineHelper.relativeInt(cliParams.get("hld"));
@@ -186,8 +203,8 @@ public class JCCal {
 			ymStart.addMonthValue(1);
 		}
 
-		int highlightDayOfWeek = highlightDay.getDayOfWeek();
-		int highlightWeekNumber = highlightDay.getWeekNumber();
+		int highlightDayOfWeek = highlightDay != null ? highlightDay.getDayOfWeek() : -1;
+		int highlightWeekNumber = highlightDay != null ? highlightDay.getWeekNumber() : -1;
 
 		int lastOutputLineLength = 0;
 		int mRowsCount = (flipMonthView ? 7 : 6);
@@ -198,7 +215,7 @@ public class JCCal {
 			for (int col = 0; col < yearViewColumns; col++) {
 				String titleText = "";
 				if (monthsData[row][col] != null) {
-					boolean thisMonth = (highlightDay.getYearValue() == monthsData[row][col].getYear()
+					boolean thisMonth = highlightDay != null && (highlightDay.getYearValue() == monthsData[row][col].getYear()
 							&& highlightDay.getMonthValue() == monthsData[row][col].getMonth());
 					if (!hlOnly || thisMonth) {
 						titleText = String.format(titleFormat, monthsData[row][col].getYear(), MONTHS_TITLES[monthsData[row][col].getMonth()],
@@ -247,7 +264,7 @@ public class JCCal {
 				for (int col = 0; col < yearViewColumns; col++) {
 					boolean thisMonth = false;
 					if (monthsData[row][col] != null) {
-						thisMonth = (highlightDay.getYearValue() == monthsData[row][col].getYear()
+						thisMonth = highlightDay != null && (highlightDay.getYearValue() == monthsData[row][col].getYear()
 								&& highlightDay.getMonthValue() == monthsData[row][col].getMonth());
 					}
 
@@ -264,7 +281,10 @@ public class JCCal {
 						if (monthsData[row][col] != null) {
 							int dayVal = monthsData[row][col].getValueAt(flipMonthView ? mCol : mRow, flipMonthView ? mRow : mCol);
 							if (dayVal >= 0) {
-								if (!hlOnly || (thisMonth && highlightDay.getDayValue() == dayVal)) {
+								if (!hlOnly || (thisMonth && highlightDay != null && highlightDay.getDayValue() == dayVal)) {
+									outputLine.append(String.format(dayNumberFormat, dayVal + 1));
+								} else if (hlOnly
+										&& highlightDays.contains(new YearMonthDay(monthsData[row][col].getYear(), monthsData[row][col].getMonth(), dayVal))) {
 									outputLine.append(String.format(dayNumberFormat, dayVal + 1));
 								} else {
 									outputLine.append(EMPTY_CELL);
