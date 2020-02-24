@@ -23,6 +23,7 @@ Parameters:
 	-pvx <val> - vertical axis values position: f, l or n - first (left/top), last (right/bottom) or none.
 	-ptl <val> - month title line position: f, l, n - top, bottom, none.
 	-tlny - do not render year near month title.
+	-tlmy - render month before year in month title.
 
 	-wdn <val> - week days names capitalization change: u - uppercase, l - lowercase.
 	-lzd - add leading zeroes to dates (i.e. render |08|09|10| instead of |8 |9 |10|).

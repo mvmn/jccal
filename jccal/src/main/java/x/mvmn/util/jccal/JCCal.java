@@ -72,7 +72,13 @@ public class JCCal {
 			weekDaysNamesCapitalization = null;
 		}
 
-		String titleFormat = cliParams.get("tlny") != null ? "%2$s" : "%04d %s";
+		String titleFormat = "%04d %s";
+		if (cliParams.get("tlmy") != null) {
+			titleFormat = "%2$s %1$04d";
+		}
+		if (cliParams.get("tlny") != null) {
+			titleFormat = "%2$s";
+		}
 
 		String daysVerticalSeparator = "|";
 		if (cliParams.get("dvs") != null) {
